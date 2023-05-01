@@ -14,7 +14,7 @@ This sample showcase:
 
 ### Status: 🚧 In Progress 🚧
 
-## Roadmap
+## Roadmap(Upcoming updates)
 - Adoptive design
 - Landing page
 - Google Maps SDK
@@ -25,5 +25,5 @@ This sample showcase:
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+<img width="939" alt="demo-1" src="https://user-images.githubusercontent.com/85487844/235410640-08768f73-2866-499b-a579-057393230747.png">
+<img width="928" alt="demo-2" src="https://user-images.githubusercontent.com/85487844/235410652-73e3cc77-0f10-4d61-b548-d8c174c465f4.png">
