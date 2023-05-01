@@ -1,0 +1,76 @@
+package com.example.petsapplication.presentation.screens.login
+
+import androidx.compose.runtime.mutableStateOf
+import com.example.petsapplication.*
+import com.example.petsapplication.common.extension.isValidEmail
+import com.example.petsapplication.common.extension.isValidPassword
+import com.example.petsapplication.common.snackbar.SnackbarManager
+import com.example.petsapplication.model.User
+import com.example.petsapplication.model.service.AuthService
+import com.example.petsapplication.model.service.FirestoreService
+import com.example.petsapplication.presentation.screens.home.HomeSections
+import com.example.petsapplication.presentation.screens.sign_up.SignUpUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import javax.inject.Inject
+
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
+    private val authService: AuthService,
+    private val firestoreService: FirestoreService
+): PetAppViewModel() {
+    var uiState = mutableStateOf(SignUpUiState())
+        private set
+
+    private val email
+        get() = uiState.value.email
+    private val password
+        get() = uiState.value.password
+    private val repeatPassword
+        get() = uiState.value.repeatPassword
+
+    fun navigateBackToSignIn(navigateBackToLogin: () -> Unit) {
+        navigateBackToLogin()
+    }
+
+    fun signUp(navigateBackToSignIn: () -> Unit) {
+        if (!email.isValidEmail()) {
+            SnackbarManager.showMessage(R.string.enter_valid_email)
+            return
+        }
+        if (!password.isValidPassword()) {
+            SnackbarManager.showMessage(R.string.password_constraint)
+            return
+        }
+        if (repeatPassword != password) {
+            SnackbarManager.showMessage(R.string.repeat_password_constraint)
+            return
+        }
+        launchCatching {
+            authService.createUser(email, password)
+            SnackbarManager.showMessage(R.string.sign_up_success)
+            navigateBackToSignIn()
+            firestoreService.createUser()
+        }
+    }
+
+    fun onAnonymousSignInClick(navigateToHome: (String, String) -> Unit) {
+        launchCatching {
+            authService.anonymousSignIn()
+            navigateToHome(HomeSections.FEED.route, ScreenRoutes.LOGIN_ROUTE)
+        }
+    }
+
+    fun onEmailChanged(email: String) {
+        uiState.value = uiState.value.copy(email = email)
+    }
+
+    fun onPasswordChanged(password: String) {
+        uiState.value = uiState.value.copy(password = password)
+    }
+
+    fun onRepeatPasswordChanged(repeatPassword: String) {
+        uiState.value = uiState.value.copy(repeatPassword = repeatPassword)
+    }
+}
